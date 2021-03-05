@@ -16,6 +16,8 @@ namespace Project_FinchControl
     // Dated Created: 2/8/2021
     // Last Modified: 3/5/2021
     //
+    // WALKTHROUGH: https://www.screencast.com/t/dwmpBL2XaUE
+    //
     // **************************************************
 
     class Program
