@@ -1177,6 +1177,10 @@ namespace Project_FinchControl
                 if (thresholdExceeded)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
+                    jarvis.setLED(100, 0, 0);
+                    jarvis.noteOn(164);
+                    jarvis.wait(1000);
+                    jarvis.noteOff(); 
                     Console.WriteLine("\t\t***************");
                     Console.WriteLine("\t\t* WARNING!!!! *");
                     Console.WriteLine("\t\t***************");
@@ -1186,6 +1190,10 @@ namespace Project_FinchControl
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    jarvis.setLED(0, 100, 0);
+                    jarvis.noteOn(260);
+                    jarvis.wait(1000);
+                    jarvis.noteOff();
                     Console.WriteLine($"\n\t\tThe {rangeType} threshold value of {minMaxValue} was not exceeded.");
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                 }
