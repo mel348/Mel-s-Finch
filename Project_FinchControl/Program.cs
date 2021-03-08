@@ -14,9 +14,10 @@ namespace Project_FinchControl
     // Application Type: Console
     // Author: Eman, Mel
     // Dated Created: 2/8/2021
-    // Last Modified: 3/5/2021
+    // Last Modified: 3/7/2021
     //
-    // WALKTHROUGH: https://www.screencast.com/t/dwmpBL2XaUE
+    // M3-S2 WALKTHROUGH: https://www.screencast.com/t/dwmpBL2XaUE
+    // M3-S3 WALKTHROUGH: https://www.screencast.com/t/irI7O1zNrhz
     //
     // **************************************************
 
@@ -43,30 +44,28 @@ namespace Project_FinchControl
         /// *****************************************************************
         /// *                     Main Menu                                 *
         /// *****************************************************************
-       
-        static void AlarmSystemDisplayMenuScreen(Finch Jarvis)
-        {
-            DisplayHeader("Alarm System");
 
-            Console.WriteLine("\tThis module is under development.");
-            DisplayContinuePrompt();
-        }
-
+        #region USER PROGRAMMING MENU SCREEN
         static void UserProgrammingDisplayMenuScreen(Finch Jarvis)
         {
             DisplayHeader("User Programming");
 
-            Console.WriteLine("\tThis module is under development");
+            Console.WriteLine("\t\tThis module is under development");
             DisplayContinuePrompt();
         }
+#endregion
+
+        #region DISPLAY EXIT
         static void DisplayExit(Finch Jarvis)
         {
             DisplayHeader("Exit");
 
-            Console.WriteLine("\tExiting Program");
+            Console.WriteLine("\t\tExiting Program");
             DisplayContinuePrompt();
         }
-        
+#endregion
+
+        #region MAIN MENU SCREEN
         static void DisplayMainMenuScreen()
         {
             Console.CursorVisible = true;
@@ -107,7 +106,7 @@ namespace Project_FinchControl
                         break;
                     
                     case "v":
-                        AlarmSystemDisplayMenuScreen(Jarvis);
+                        LightAlarmMenu(Jarvis);
                         break;
 
                     case "i":
@@ -125,7 +124,7 @@ namespace Project_FinchControl
 
                     default:
                         Console.WriteLine();
-                        Console.WriteLine("\tJ.A.R.V.I.S does not understand your strange human ways! ");
+                        Console.WriteLine("\t\tJ.A.R.V.I.S does not understand your strange human ways! ");
                         DisplayContinuePrompt();
                         break;
                 }
@@ -133,13 +132,13 @@ namespace Project_FinchControl
             } while (!quitApplication);
 
         }
-
-        #region TALENT SHOW
+#endregion
 
         /// *****************************************************************
-        /// *                     Talent Show Menu                          *
+        /// *                     TALENT SHOW                          *
         /// *****************************************************************
-        
+
+        #region DANCING
         static void TalentShowDisplayDance(Finch Jarvis)
         {
             DisplayHeader("A friend once told me to throw a little hot red in mix!");
@@ -213,7 +212,9 @@ namespace Project_FinchControl
             DisplayMenuPrompt("Talent Show");
 
         }
+        #endregion
 
+        #region MIXING IT UP
         static void TalentShowDisplayMixingItUp(Finch Jarvis)
         { 
              DisplayHeader("The House Party Protocol, sir?");
@@ -380,7 +381,9 @@ namespace Project_FinchControl
             Console.WriteLine("\n\tI don’t wanna see this on a Myspace page. Please, no gang signs. \n\tNo, throw it up; I’m kidding. Yeah, peace. I love peace. I’d be out of a job with peace.\n");
             DisplayContinuePrompt();
         }
+        #endregion
 
+        #region TALENT SHOW MENU SCREEN
         static void TalentShowDisplayMenuScreen(Finch Jarvis)
         {
             Console.CursorVisible = true;
@@ -426,12 +429,9 @@ namespace Project_FinchControl
 
             } while (!quitTalentShowMenu);
         }
+        #endregion
 
-        /// *****************************************************************
-        /// *               Talent Show > Light and Sound                   *
-        /// *****************************************************************
-        /// <param name="Jarvis">finch robot object</param>
-
+        #region LIGHT & SOUND
         static void TalentShowDisplayLightAndSound(Finch Jarvis)
         {
             Console.CursorVisible = false;
@@ -608,6 +608,12 @@ namespace Project_FinchControl
         }
 
         #endregion
+
+        /// <summary>
+        /// ******************************************************************
+        /// *                       DATA RECORDER                            *
+        /// ******************************************************************
+        /// <param name="Jarvis"></param>
 
         #region DATA RECORDER
         static void DataRecorderDisplayMenuScreen(Finch Jarvis)
@@ -893,8 +899,306 @@ namespace Project_FinchControl
         }
         #endregion
 
+        /// ******************************************************************
+        /// *                    LIGHT ALARM MENU                            *
+        /// ******************************************************************
+        /// <param name="Jarvis"></param> 
+
+        #region ALARM MENU SCREEN
+        static void LightAlarmMenu(Finch Jarvis)
+        {
+            Console.CursorVisible = true;
+
+            bool quitMenu = false;
+            string menuChoice = null;
+
+            string sensorsToMonitor = "";                                                                                   //allows user to choose left, right, or both sensors
+            string rangeType = "";                                                                                          //min or max value for our threshold of what we are monitoring
+            int minMaxValue = 0;
+            int timeToMonitor = 0;
+            bool valid = false;
+
+            do
+            {
+                DisplayHeader("Light Alarm Menu");
+
+                Console.WriteLine("\t\ti Set Sensors to Monitor");
+                Console.WriteLine("\t\tr Set Range Type");
+                Console.WriteLine("\t\to Set Minimum/Maximum Threshold Value");
+                Console.WriteLine("\t\tn Set Time to Monitor");
+                Console.WriteLine("\t\t* Set the Alarm");
+                Console.WriteLine("\t\t. Return to Main Menu");
+                Console.Write("\n\t\tPlease enter the corresponding letter from the menu:  ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                menuChoice = Console.ReadLine().ToLower();                                                                 //Allows the user input to be stored in menuChoice variable and also converts user input to lower case      
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+
+                if (string.Equals(menuChoice, "i") || string.Equals(menuChoice, "r") || string.Equals(menuChoice, "o") || string.Equals(menuChoice, "n") || string.Equals(menuChoice, "*") || string.Equals(menuChoice, "."))
+                {                                                                                                            //"if" user input (menuChoice) is equal to any of the options "i""o", etc. then the if condition is true
+                    valid = true;                                                                                           //Since "valid" is technically "false" when declared, we have to change it to true in the if statement so the option is recognized as true and not false
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.WriteLine($"\n\t\t{menuChoice} is valid.  You may proceed.");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("\n\t\tPRESS ANY KEY TO CONTINUE");
+                    Console.ReadKey();
+                }
+                else                                                                                                       //Otherwise the statement is false, displaying that message and it will run through the while loop until user input is true
+                {
+                    Console.WriteLine($"\n\t\t{menuChoice} is invalid.  Try again.");
+                    Console.ReadKey();
+                }
 
 
+                switch (menuChoice)
+                {
+                    case "i":
+                        sensorsToMonitor = LightAlarmSensors();
+                        break;
+
+                    case "r":
+                        rangeType = LightAlarmRanges();
+                        break;
+
+                    case "o":
+                        minMaxValue = LightAlarmMinMax(rangeType, Jarvis);
+                        break;
+
+                    case "n":
+                        timeToMonitor = LightAlarmTime();
+                        break;
+
+                    case "*":
+                        LightAlarmSet(Jarvis, sensorsToMonitor, rangeType, minMaxValue, timeToMonitor);
+                        break;
+
+                    case ".":
+                        quitMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\t\tPLEASE ENTER A LETTER FOR YOUR MENU CHOICE");
+                        break;
+                }
+
+            } while (!quitMenu);
+        }
+        #endregion
+
+        #region ALARM SENSORS
+        static string LightAlarmSensors()
+        {
+            string sensorsToMonitor;
+            bool valid = false;
+
+            DisplayHeader("Sensors to Monitor");
+
+            Console.Write("\n\t\tSensors to monitor [left, right, or both]: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            sensorsToMonitor = Console.ReadLine();
+
+            if (sensorsToMonitor == "left" || sensorsToMonitor == "right" || sensorsToMonitor == "both")
+            {
+                valid = true;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"\n\t\tYour sensor choice {sensorsToMonitor} has been accepted, please proceed!");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+            }
+            else
+            {
+                Console.WriteLine("\n\t\tYour entry is invalid. Please press any key to try again.....");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                //LightAlarmSensors();
+            }
+
+            DisplayMenuPrompt("Light Alarm");
+            return sensorsToMonitor;
+        }
+        #endregion
+
+        #region ALARM RANGES
+        static string LightAlarmRanges()
+        {
+            string rangeType = null;
+            bool valid = false;
+
+            DisplayHeader("Range Type");
+            Console.SetCursorPosition(5, 5);
+            Console.Write("\t\tRange Type [minimum, maximum]: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            rangeType = Console.ReadLine();
+
+            if (rangeType == "minimum" || rangeType == "maximum")
+            {
+                valid = true;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"\n\t\tYour entry of {rangeType} has been accepted, please proceed!");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            }
+            else
+            {
+                Console.WriteLine("\n\t\tYour entry is invalid. Please press any key to try again.....");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.ReadKey();
+            }
+
+            DisplayMenuPrompt("Light Alarm");
+            return rangeType;
+        }
+        #endregion
+
+        #region MIN MAX VALUES
+        static int LightAlarmMinMax(string rangeType, Finch jarvis)
+        {
+            int minMaxValue;
+
+            DisplayHeader("Minimum/Maximum Threshold Value");
+            Console.SetCursorPosition(5, 5);
+            Console.WriteLine($"\n\t\tLeft light sensor ambient value: {jarvis.getLeftLightSensor()}");
+            Console.WriteLine($"\n\t\tRight light sensor ambient value: {jarvis.getRightLightSensor()}");
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write($"\n\t\tEnter the {rangeType} light sensor value: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            int.TryParse(Console.ReadLine(), out minMaxValue);
+
+            if(minMaxValue >= -0 && minMaxValue <= 9999999)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"\n\t\t{minMaxValue} has been accepted, press any key to continue!");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("\n\t\tYour entry is invalid.  Please press any key to try again.....");
+                Console.ReadKey();
+            }
+            DisplayMenuPrompt("Light Alarm");
+            return minMaxValue;
+        }
+        #endregion
+
+        #region ALARM TIME
+        static int LightAlarmTime()
+        {
+            int timeToMonitor;
+
+            DisplayHeader("Time to Monitor");
+
+            Console.SetCursorPosition(5, 5);
+            Console.Write($"\t\tPlease enter how many seconds you would like for monitoring to take:  ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            int.TryParse(Console.ReadLine(), out timeToMonitor);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            if (timeToMonitor >= -0 && timeToMonitor <= 9999999)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"\n\t\tYour entry of {timeToMonitor} seconds has been accepted, Press any key to continue!");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("\n\t\tYour entry is invalid.  Please press any key to try again.....");
+                Console.ReadKey();
+            }
+
+            DisplayMenuPrompt("Light Alarm");
+            return timeToMonitor;
+        }
+        #endregion
+
+        #region SET ALARM
+        static void LightAlarmSet(
+            Finch jarvis, 
+            string sensorsToMonitor, 
+            string rangeType, 
+            int minMaxValue, 
+            int timeToMonitor)
+        {
+            int secondsElapsed = 0;
+            bool thresholdExceeded = false;
+            int currentLightSensorValue = 0;
+
+            DisplayHeader("Set Alarm");
+
+            Console.SetCursorPosition(5, 5);
+            Console.WriteLine($"\t\tSensors to Monitor {sensorsToMonitor}");
+            Console.WriteLine("\t\tRange Type: {0}", rangeType);
+            Console.WriteLine("\t\tMin/Max Threshold Value: " + minMaxValue);
+            Console.WriteLine($"\t\tTime to Monitor: {timeToMonitor}");
+            Console.WriteLine();
+
+            Console.WriteLine("\n\t\tPress any key to start the alarm.");
+            Console.ReadKey();
+            Console.WriteLine();
+
+            while ((secondsElapsed < timeToMonitor) && !thresholdExceeded)
+            {
+                switch (sensorsToMonitor)
+                {
+                    case "left":
+                        currentLightSensorValue = jarvis.getLeftLightSensor();
+                        break;
+
+                    case "right":
+                        currentLightSensorValue = jarvis.getRightLightSensor();
+                        break;
+
+                    case "both":
+                        currentLightSensorValue = (jarvis.getLeftLightSensor() + jarvis.getRightLightSensor()) / 2;
+                        break;
+                }
+
+                switch (rangeType)
+                {
+                    case "minimum":
+                        if (currentLightSensorValue < minMaxValue)
+                        {
+                            thresholdExceeded = true;
+                        }
+                        break;
+                    case "maximum":
+                        if (currentLightSensorValue > minMaxValue)
+                        {
+                            thresholdExceeded = true;
+                        }
+                        break;
+                }
+                jarvis.wait(1000);
+                secondsElapsed++;
+            }
+                if (thresholdExceeded)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\t\t***************");
+                    Console.WriteLine("\t\t* WARNING!!!! *");
+                    Console.WriteLine("\t\t***************");
+                    Console.WriteLine($"\n\t\tThe {rangeType} threshold value of {minMaxValue} was exceeded by the current light sensor value of {currentLightSensorValue}.");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.WriteLine($"\n\t\tThe {rangeType} threshold value of {minMaxValue} was not exceeded.");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                }
+
+            DisplayMenuPrompt("Light Alarm");
+        }
+
+        #endregion
+
+        ///******************************************************************
+        ///*                    FINCH ROBOT MANAGEMENT                      *
+        ///******************************************************************
+        
         #region FINCH ROBOT MANAGEMENT
 
         /// <summary>
@@ -972,7 +1276,7 @@ namespace Project_FinchControl
                 finchRobot.wait(500);
                 finchRobot.noteOff();
 
-                Console.WriteLine("\n\t\tHello, I am J.A.R.V.I.S. ");
+                Console.WriteLine("\n\t\tHello, I am J.A.R.V.I.S. Press any key to start the program!");
                 Console.ReadKey();
                 break;
 
@@ -997,6 +1301,10 @@ namespace Project_FinchControl
 
         #endregion
 
+        ///******************************************************************
+        ///*                     USER INTERFACE                             *
+        ///******************************************************************
+        
         #region USER INTERFACE
 
         /// *****************************************************************
