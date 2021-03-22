@@ -17,6 +17,9 @@ namespace Project_FinchControl
         LEDON,
         LEDOFF,
         GETTEMPERATURE,
+        NOTEON,
+        NOTEOFF,
+        MIXUP,
         DONE
     }
 
@@ -28,10 +31,11 @@ namespace Project_FinchControl
     // Application Type: Console
     // Author: Eman, Mel
     // Dated Created: 2/8/2021
-    // Last Modified: 3/7/2021
+    // Last Modified: 3/21/2021
     //
     // M3-S2 WALKTHROUGH: https://www.screencast.com/t/dwmpBL2XaUE
     // M3-S3 WALKTHROUGH: https://www.screencast.com/t/irI7O1zNrhz
+    // M3-S4 WALKTHROUGH: https://www.screencast.com/t/UM8yPbh9RM
     //
     // **************************************************
 
@@ -1171,12 +1175,18 @@ namespace Project_FinchControl
                             if (currentLightSensorValue < minMaxValue)
                             {
                                 thresholdExceeded = true;
-                            }
+                            jarvis.noteOn(196);
+                            jarvis.wait(200);
+                            jarvis.noteOff();
+                        }
                             break;
                         case "maximum":
                             if (currentLightSensorValue > minMaxValue)
                             {
                                 thresholdExceeded = true;
+                            jarvis.noteOn(196);
+                            jarvis.wait(200);
+                            jarvis.noteOff();
                             }
                             break;
                     }
@@ -1382,7 +1392,7 @@ namespace Project_FinchControl
             {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"\t\t- {commandName.ToLower()}\n");                  //take string (to lower case)
-                if (commandCount % 11 == 0) Console.Write("\t\t\n");                   //counts how many can be run on that line
+                if (commandCount % 14 == 0) Console.Write("\t\t\n");                   //counts how many can be run on that line
                 commandCount++;
                 Console.ForegroundColor = ConsoleColor.DarkRed;
             }
@@ -1412,7 +1422,7 @@ namespace Project_FinchControl
                 }
             }
 
-            Console.WriteLine("\n\t\tThe orders you are giving to Jarvis: ");
+            Console.WriteLine("\n\t\tThe orders you are giving to Jarvis: ");            //enumeration feedback validation 
 
             foreach (Command element in commands)                                       //syntax is foreach( data type and temp variable in(keyword) commands (iterable items - command is our list)
             
@@ -1442,7 +1452,7 @@ namespace Project_FinchControl
 
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"\t\t- {commandName.ToLower()}\n");                  //take string (to lower case)
-                    if (count % 11 == 0) Console.Write("\t\t\n");                   //counts how many can be run on that line
+                    if (count % 14 == 0) Console.Write("\t\t\n");                   //counts how many can be run on that line
                     count++;
                     Console.ForegroundColor = ConsoleColor.DarkRed;
 
@@ -1547,15 +1557,130 @@ namespace Project_FinchControl
                             Jarvis.wait(waitMilliSeconds);
                             break;                                                                                  //interpilation to get a string, it will return a double value and convert to a string, n2 rounds to 2 decimals places
 
-                        case Command.DONE:
+                        case Command.NOTEON:
                             Console.ForegroundColor = ConsoleColor.White;
-                            Jarvis.wait(waitMilliSeconds);
-                            commandFeedback = Command.DONE.ToString();
-                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine("\t\tMake some noise!");
+                            Jarvis.noteOn(261);
+                            Jarvis.wait(200);
+                        Jarvis.noteOff();
+                            Jarvis.noteOn(261);
+                            Jarvis.wait(200);
+                        Jarvis.noteOff();
+                            Jarvis.noteOn(261);
+                            Jarvis.wait(200);
+                        Jarvis.noteOff();
+                            Jarvis.noteOn(196);
+                            Jarvis.wait(500);
+                            commandFeedback = Command.NOTEON.ToString();
                             break;
 
-                        default:
+                        case Command.NOTEOFF:
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine("\t\tTurn it off now!!");
+                            Jarvis.noteOff();
+                            Jarvis.wait(500);
+                            commandFeedback = Command.NOTEOFF.ToString();
                             break;
+
+                        case Command.MIXUP:
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine("\t\tHere we go again drawing attention to ourselves!!");
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(165);
+                            Jarvis.setMotors(100, 100);
+                            Jarvis.wait(600);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(196);
+                            Jarvis.setMotors(-100, -100);
+                            Jarvis.wait(600);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(196);
+                            Jarvis.setMotors(-50, 50);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(220);
+                            Jarvis.setMotors(50, -50);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(220);
+                            Jarvis.setMotors(-50, 50);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(262);
+                            Jarvis.setMotors(50, -50);
+                            Jarvis.wait(350);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(247);
+                            Jarvis.setMotors(50, 0);
+                            Jarvis.wait(350);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(262);
+                            Jarvis.setMotors(0, 50);
+                            Jarvis.wait(350);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(247);
+                            Jarvis.setMotors(10, 10);
+                            Jarvis.wait(350);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(262);
+                            Jarvis.setMotors(-10, -10);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(196);
+                            Jarvis.setMotors(-100, 100);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(100, 0, 0);
+                            Jarvis.noteOn(196);
+                            Jarvis.setMotors(100, -100);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(220);
+                            Jarvis.setMotors(50, 50);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            Jarvis.setLED(218, 165, 32);
+                            Jarvis.noteOn(220);
+                            Jarvis.setMotors(0, 0);
+                            Jarvis.wait(500);
+                            Jarvis.noteOff();
+
+                            commandFeedback = Command.MIXUP.ToString();
+                            break;
+
+                        case Command.DONE:
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Jarvis.wait(waitMilliSeconds);
+                                commandFeedback = Command.DONE.ToString();
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                break;
+
+                            default:
+                                break;
                      Console.WriteLine("\t\tJarvis has completed his orders!");
                     }
                     
