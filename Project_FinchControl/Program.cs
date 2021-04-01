@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.IO;
 using FinchAPI;
 
@@ -41,884 +44,1217 @@ namespace Project_FinchControl
 
     class Program
     {
+        private static string fileIOStatusMessage;
+        private static (string userName, string password) userInfo;
+        private static string[] loginInfoArray;
+        private static string userName;
+        private static bool loginInfoText;
+
         static void Main(string[] args)
         {
-            SetTheme();
-
+            DisplaySetTheme();
+            DisplayLoginRegister();
+            //SetTheme();
             DisplayWelcomeScreen();
             DisplayMainMenuScreen();
             DisplayClosingScreen();
         }
 
-        static void SetTheme()
+        /*static void SetTheme()
+          {
+              Console.ForegroundColor = ConsoleColor.DarkRed;
+              Console.BackgroundColor = ConsoleColor.Black;
+          }*/
+
+        #region USER DISPLAY SET THEME
+
+        static void DisplaySetTheme()
         {
+            (ConsoleColor ForegroundColor, ConsoleColor BackgroundColor) themeColors;    //theme color tuples
+            bool themeChosen = false;
+
+            themeColors = ReadThemeData();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.BackgroundColor = ConsoleColor.Black;
+            Console.Clear();
+
+            DisplayHeader("Set Application Theme");
+            Console.WriteLine($"\t\t Current Text Color: {Console.ForegroundColor}");
+            Console.WriteLine($"\t\t Current Background Color: { Console.BackgroundColor}");
+            Console.WriteLine();
+
+            Console.WriteLine("\t\t Do you want to change the current text or background color? [Yes | No]");
+            if (Console.ReadLine().ToLower() == "yes")
+            {
+                do
+                {
+                    themeColors.ForegroundColor = GetConsoleColorFromUser("text color");
+                    themeColors.BackgroundColor = GetConsoleColorFromUser("background color");
+
+                    DisplayHeader("Set Application Theme");
+                    Console.ForegroundColor = themeColors.ForegroundColor;
+                    Console.BackgroundColor = themeColors.BackgroundColor;
+                    Console.WriteLine($"\t\t Do you want to continue with this theme?[yes | no]");
+
+                    if (Console.ReadLine().ToLower() == "yes")
+                    {
+                        themeChosen = true;
+                        WriteThemeData(themeColors.ForegroundColor, themeColors.BackgroundColor);
+                    }
+                } while (!themeChosen);
+            }
+            DisplayContinuePrompt();
         }
+        #endregion
 
-            /// *****************************************************************
-            /// *                       MAIN MENU                               *
-            /// *****************************************************************
+        /// ******************************************
+        /// *       USER CONSOLE COLOR CHOICE        *
+        /// ******************************************
 
-            #region DISPLAY EXIT
-            static void DisplayExit(Finch Jarvis)
+        #region CONSOLE COLOR
+        private static ConsoleColor GetConsoleColorFromUser(string property)
+        {
+            ConsoleColor consoleColor;
+            bool validConsoleColor;
+
+            do
             {
-                DisplayHeader("Exit");
+                Console.Write($"\t\t Enter a color for {property}: ");
+                validConsoleColor = Enum.TryParse<ConsoleColor>(Console.ReadLine(), true, out consoleColor);
 
-                Console.WriteLine("\t\tExiting Program");
-                DisplayContinuePrompt();
-            }
-            #endregion
-
-            #region MAIN MENU SCREEN
-            static void DisplayMainMenuScreen()
-            {
-                Console.CursorVisible = true;
-
-                bool quitApplication = false;
-                string menuChoice;
-                bool valid = false;
-
-                Finch Jarvis = new Finch();
-
-                do
+                if (!validConsoleColor)
                 {
-
-                    DisplayHeader("J.A.R.V.I.S.'S MAIN FRAME");
-
-                    Console.WriteLine("\t\tj) Connect J.A.R.V.I.S.");
-                    Console.WriteLine("\t\ta) Talent Show");
-                    Console.WriteLine("\t\tr) Data Recorder");
-                    Console.WriteLine("\t\tv) Alarm System");
-                    Console.WriteLine("\t\ti) User Programming");
-                    Console.WriteLine("\t\ts) Disconnect J.A.R.V.I.S");
-                    Console.WriteLine("\t\t.) Exit");
-                    Console.Write("\n\t\tWhat would you like to do? ");
-                    menuChoice = Console.ReadLine().ToLower();
-
-                    switch (menuChoice)
-                    {
-                        case "j":
-                            DisplayConnectFinchRobot(Jarvis);
-                            break;
-
-                        case "a":
-                            TalentShowDisplayMenuScreen(Jarvis);
-                            break;
-
-                        case "r":
-                            DataRecorderDisplayMenuScreen(Jarvis);
-                            break;
-
-                        case "v":
-                            LightAlarmMenu(Jarvis);
-                            break;
-
-                        case "i":
-                            UserProgrammingDisplayMenuScreen(Jarvis);
-                            break;
-
-                        case "s":
-                            DisplayDisconnectFinchRobot(Jarvis);
-                            break;
-
-                        case ".":
-                            DisplayExit(Jarvis);
-                            quitApplication = true;
-                            break;
-
-                        default:
-                            Console.WriteLine();
-                            Console.WriteLine("\t\tJ.A.R.V.I.S does not understand your strange human ways! ");
-                            DisplayContinuePrompt();
-                            break;
-                    }
-
-                } while (!quitApplication);
-
-            }
-            #endregion
-
-            /// *****************************************************************
-            /// *                      TALENT SHOW                              *
-            /// *****************************************************************
-
-            #region DANCING
-            static void TalentShowDisplayDance(Finch Jarvis)
-            {
-                DisplayHeader("A friend once told me to throw a little hot red in mix!");
-
-                Console.WriteLine("\n\tWorking on it, sir. This is a prototype.\n");
-                DisplayContinuePrompt();
-
-                Console.CursorVisible = false;
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(100, 100);
-                Jarvis.wait(3000);
-                Jarvis.setMotors(100, -100);
-                Jarvis.wait(3000);
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.setMotors(-100, 100);
-                Jarvis.wait(3000);
-                Jarvis.setMotors(-50, -50);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(50, 50);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.setMotors(-100, 100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(100, -100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.setMotors(-100, 100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(100, -100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.setMotors(-100, 100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(100, -100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.setMotors(-100, 100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(100, -100);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(50, 50);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.setMotors(-50, -50);
-                Jarvis.wait(1000);
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.setMotors(0, 0);
-                Jarvis.wait(1000);
-
-                Console.WriteLine("\n\tYes, that shall help you keep a low profile.\n");
-                DisplayMenuPrompt("Talent Show");
-
-            }
-            #endregion
-
-            #region MIXING IT UP
-            static void TalentShowDisplayMixingItUp(Finch Jarvis)
-            {
-                DisplayHeader("The House Party Protocol, sir?");
-
-                //Lights and Song
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(165);
-                Jarvis.wait(600);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(196);
-                Jarvis.wait(600);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(196);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(220);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(220);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(262);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(247);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(262);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(247);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(262);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(196);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(196);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(220);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(220);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-
-                //Lights, "song", and dancing (Can't really hear the song over the motor)
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(165);
-                Jarvis.setMotors(100, 100);
-                Jarvis.wait(600);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(196);
-                Jarvis.setMotors(-100, -100);
-                Jarvis.wait(600);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(196);
-                Jarvis.setMotors(-50, 50);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(220);
-                Jarvis.setMotors(50, -50);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(220);
-                Jarvis.setMotors(-50, 50);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(262);
-                Jarvis.setMotors(50, -50);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(247);
-                Jarvis.setMotors(50, 0);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(262);
-                Jarvis.setMotors(0, 50);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(247);
-                Jarvis.setMotors(10, 10);
-                Jarvis.wait(350);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(262);
-                Jarvis.setMotors(-10, -10);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(196);
-                Jarvis.setMotors(-100, 100);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(100, 0, 0);
-                Jarvis.noteOn(196);
-                Jarvis.setMotors(100, -100);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(220);
-                Jarvis.setMotors(50, 50);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Jarvis.setLED(218, 165, 32);
-                Jarvis.noteOn(220);
-                Jarvis.setMotors(0, 0);
-                Jarvis.wait(500);
-                Jarvis.noteOff();
-
-                Console.WriteLine("\n\tI don’t wanna see this on a Myspace page. Please, no gang signs. \n\tNo, throw it up; I’m kidding. Yeah, peace. I love peace. I’d be out of a job with peace.\n");
-                DisplayContinuePrompt();
-            }
-            #endregion
-
-            #region TALENT SHOW MENU SCREEN
-            static void TalentShowDisplayMenuScreen(Finch Jarvis)
-            {
-                Console.CursorVisible = true;
-
-                bool quitTalentShowMenu = false;
-                string menuChoice;
-
-                do
-                {
-                    DisplayHeader("J.A.R.V.I.S. Abilities");
-
-                    Console.WriteLine("\ti) Sound & Light Show");
-                    Console.WriteLine("\tr) Dancing");
-                    Console.WriteLine("\to) Ironette Audition");
-                    Console.WriteLine("\tn) Return to Main Menu");
-                    Console.Write("\n\t\tWhat would you like to see J.A.R.V.I.S. to do?");
-                    Console.WriteLine("\n\t\tPlease enter the corresponding letter from the menu (keep in mind this module is under development):  ");
-                    menuChoice = Console.ReadLine().ToLower();
-
-                    switch (menuChoice)
-                    {
-                        case "i":
-                            TalentShowDisplayLightAndSound(Jarvis);
-                            break;
-
-                        case "r":
-                            TalentShowDisplayDance(Jarvis);
-                            break;
-
-                        case "o":
-                            TalentShowDisplayMixingItUp(Jarvis);
-                            break;
-
-                        case "n":
-                            quitTalentShowMenu = true;
-                            break;
-
-                        default:
-                            Console.WriteLine();
-                            Console.WriteLine("\tPLEASE ENTER A LETTER FOR THE THE MENU CHOICE");
-                            break;
-                    }
-
-                } while (!quitTalentShowMenu);
-            }
-            #endregion
-
-            #region LIGHT & SOUND
-            static void TalentShowDisplayLightAndSound(Finch Jarvis)
-            {
-                Console.CursorVisible = false;
-
-                DisplayHeader("Song and light show!");
-
-                Console.WriteLine("\tAvenger's Theme Song");
-                DisplayContinuePrompt();
-
-                for (int lightSoundLevel = 0; lightSoundLevel < 400; lightSoundLevel++)
-                {
-                    Jarvis.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(600);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(600);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(146);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(13, 108, 172);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(100);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(13, 108, 172);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(100);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(13, 108, 172);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(600);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(13, 108, 172);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(13, 108, 172);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(600);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(230, 132, 49);
-                    Jarvis.noteOn(174);
-                    Jarvis.wait(150);
-                    Jarvis.setLED(230, 132, 49);
-                    Jarvis.noteOn(174);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(230, 132, 49);
-                    Jarvis.noteOn(174);
-                    Jarvis.wait(350);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(230, 132, 49);
-                    Jarvis.noteOn(174);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(230, 132, 49);
-                    Jarvis.noteOn(174);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(500);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(100, 0, 0);
-                    Jarvis.noteOn(164);
-                    Jarvis.wait(150);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(100);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(100);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(350);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(100);
-                    Jarvis.noteOff();
-                    Jarvis.setLED(131, 46, 118);
-                    Jarvis.noteOn(155);
-                    Jarvis.wait(100);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(23, 88, 32);
-                    Jarvis.noteOn(123);
-                    Jarvis.wait(800);
-                    Jarvis.noteOff();
-
-                    Jarvis.setLED(253, 242, 45);
-                    Jarvis.noteOn(130);
-                    Jarvis.wait(600);
-                    Jarvis.noteOff();
-
-                    break;
-                }
-
-                DisplayMenuPrompt("J.A.R.V.I.S.'s Abilities Menu");
-            }
-
-            #endregion
-
-            /// ******************************************************************
-            /// *                       DATA RECORDER                            *
-            /// ******************************************************************
-
-            #region DATA RECORDER MENU
-            static void DataRecorderDisplayMenuScreen(Finch Jarvis)
-            {
-                int numberOfDataPoints = 0;
-                double dataPointFrequency = 0;
-                double[] temperatures = null;
-
-                Console.CursorVisible = true;
-
-                bool quitMenu = false;
-                string menuChoice = null;
-                bool valid = false;
-
-                do
-                {
-                    DisplayHeader("Data Recorder Menu");
-
-                    Console.WriteLine("\t\ti Number of Data Points");
-                    Console.WriteLine("\t\tr Frequency of Data Points");
-                    Console.WriteLine("\t\to Get Data");
-                    Console.WriteLine("\t\tn Show Data");
-                    Console.WriteLine("\t\t* Get Light Data");
-                    Console.WriteLine("\t\t. Return to Main Menu");
-                    Console.Write("\n\t\tPlease enter the corresponding letter from the menu:  ");
-                    menuChoice = Console.ReadLine().ToLower();                                                                 //Allows the user input to be stored in menuChoice variable and also converts user input to lower case      
-
-                    if (string.Equals(menuChoice, "i") || string.Equals(menuChoice, "r") || string.Equals(menuChoice, "o") || string.Equals(menuChoice, "n") || string.Equals(menuChoice, "*") || string.Equals(menuChoice, "."))
-                    {                                                                                                            //"if" user input (menuChoice) is equal to any of the options "i""o", etc. then the if condition is true
-                        valid = true;                                                                                           //Since "valid" is technically "false" when declared, we have to change it to true in the if statement so the option is recognized as true and not false
-                        Console.WriteLine($"\t\t{menuChoice} is valid.  You may proceed.");
-                        Console.WriteLine("\t\tPRESS ANY KEY TO CONTINUE");
-                        Console.ReadKey();
-                    }
-                    else                                                                                                       //Otherwise the statement is false, displaying that message and it will run through the while loop until user input is true
-                    {
-                        Console.WriteLine($"{menuChoice} is invalid.  Try again.");
-                        Console.ReadKey();
-                    }
-                    //fail safe to ensure that after the user input has been recognized as true
-                    //that you will exit out of the loop.
-                    switch (menuChoice)
-                    {
-                        case "i":
-                            numberOfDataPoints = DataRecorderDisplayGetNumberOfDataPoints();
-                            break;
-
-                        case "r":
-                            dataPointFrequency = DataRecorderDisplayGetDataPointFrequency();
-                            break;
-
-                        case "o":
-                            temperatures = DataRecorderDisplayGetData(numberOfDataPoints, dataPointFrequency, Jarvis);
-                            break;
-
-                        case "n":
-                            DataRecorderDisplayDataTable(temperatures);
-                            break;
-
-                        case "*":
-                            GetLightData(Jarvis);
-                            break;
-
-
-                        case ".":
-                            quitMenu = true;
-                            break;
-
-                        default:
-                            Console.WriteLine();
-                            Console.WriteLine("\tPLEASE ENTER A LETTER FOR THE THE MENU CHOICE");
-                            break;
-                    }
-
-                } while (!quitMenu);
-            }
-            #endregion
-
-            #region DATA TABLE
-            static void DataRecorderDisplayDataTable(double[] temperatures)
-            {
-                DisplayHeader("Show Data");
-
-                //
-                // display table headers
-                //
-
-                Console.WriteLine(
-                    "Recording #".PadLeft(17) +
-                    "Temp".PadLeft(12)
-                    );
-
-                Console.WriteLine(
-                  "\n__________".PadLeft(15) +
-               "__________".PadLeft(15)
-                    );
-
-                //
-                // Display Table Data
-                //
-
-                for (int index = 0; index < temperatures.Length; index++)
-                {
-                    Console.WriteLine(
-                        (index + 1).ToString().PadLeft(15) +
-                        temperatures[index].ToString("n2").PadLeft(15) + "°F"
-                        );
-                }
-
-                DisplayContinuePrompt();
-            }
-            #endregion
-
-            #region MISC.
-            static void DataRecorderDisplayGetData(double[] temperatures)
-            {
-                DisplayHeader("Show Data");
-
-                DataRecorderDisplayTable(temperatures);
-
-                DisplayContinuePrompt();
-            }
-            #endregion
-
-            #region DISPLAY TABLE
-            static void DataRecorderDisplayTable(double[] temperatures)
-            {
-                //
-                // display table headers
-                //
-                Console.WriteLine(
-                    "Recording #".PadLeft(17) +
-                    "Temp".PadLeft(12)
-                    );
-                Console.WriteLine(
-                    "__________".PadLeft(15) +
-               "__________".PadLeft(15)
-                    );
-
-
-                //
-                // Display Table Data
-                //
-
-                for (int index = 0; index < temperatures.Length; index++)
-                {
-                    double fahrenheit = ConvertCelsiusToFahrenheit(temperatures[index]);            //find celcius data
-
-
-                    Console.WriteLine(
-                        (index + 1).ToString().PadLeft(15) +
-                        temperatures[index].ToString("n2").PadLeft(15) + "°F"
-                        );
-                }
-                DisplayContinuePrompt();
-
-            }
-            #endregion
-
-            #region CONVERT CELSIUS TO FAHRENHEIT
-            /// <summary>
-            /// Converting Celsius to Fahrenheit
-            /// </summary>
-            /// <param name="celsius"></param>
-            /// <returns></returns>
-            static double ConvertCelsiusToFahrenheit(double celsius)
-            {
-                return celsius * 9 / 5 + 32;
-            }
-            #endregion
-
-            #region DISPLAY GET DATA
-            static double[] DataRecorderDisplayGetData(int numberOfDataPoints, double dataPointFrequency, Finch jarvis)
-            {
-                double[] temperatures = new double[numberOfDataPoints];
-
-                DisplayHeader("Get Data");
-
-                Console.WriteLine($"\t\tNumber of data points: {numberOfDataPoints}");
-                Console.WriteLine($"\t\tData point frequency: {dataPointFrequency}");
-                Console.WriteLine();
-
-                Console.WriteLine("\t\tJarvis is ready to begin recording the temperature data.");
-                Console.WriteLine("\t\tPress Any Key To Continue.");
-                DisplayContinuePrompt();
-
-                for (int index = 0; index < numberOfDataPoints; index++)
-                {
-                    temperatures[index] = jarvis.getTemperature();
-                    Console.WriteLine($"\t\tReading {index + 1}:{temperatures[index].ToString("n2")}");
-                    int waitInSeconds = (int)(dataPointFrequency * 1000);
-                    jarvis.wait(waitInSeconds);
-                }
-                Console.WriteLine("\t\tYour data recording has been completed.");
-                DisplayContinuePrompt();
-
-
-                DisplayHeader("Get Data");
-                Console.WriteLine();
-
-                Console.WriteLine("\t\tTable of Temperatures");
-                Console.WriteLine();
-
-                DataRecorderDisplayTable(temperatures);
-
-                DisplayContinuePrompt();
-
-                return temperatures;
-            }
-            #endregion
-
-            #region DATA POINT FREQUENCY
-            static double DataRecorderDisplayGetDataPointFrequency()
-            {
-                double dataPointFrequency;
-
-                DisplayHeader("Data Point Frequency");
-
-                Console.Write("\t\tEnter the frequency (in seconds) you would like to receive data points:  ");
-                double.TryParse(Console.ReadLine(), out dataPointFrequency);                                                                            //we have to convert the string to a double for the array
-                                                                                                                                                        //we have to convert the string to a double for the array
-                                                                                                                                                        //so even though its a number that is being typed in it thinks its a string
-                                                                                                                                                        //this way the user can enter decimal numbers as well
-
-                if (dataPointFrequency >= -0 && dataPointFrequency <= 9999999)
-                {
-                    Console.WriteLine($"\t\t{dataPointFrequency} has been accepted, you may proceed!");
-                    Console.ReadKey();
-                    DisplayContinuePrompt();
+                    Console.WriteLine("\n\t\t***** You did not choose a valid color. Please try again.****\n");
                 }
                 else
                 {
-                    Console.WriteLine("\t\tYour entry is invalid. Please press any key to try again....");
+                    validConsoleColor = true;
+                }
+            } while (!validConsoleColor);
+
+            return consoleColor;
+        }
+        #endregion
+
+        #region READ THEME DATA
+
+        private static (ConsoleColor foregroundColor, ConsoleColor backgroundColor) ReadThemeData()  //returning tuple values
+        {
+            string dataPath = @"Data/Theme.txt";
+            string[] themeColors;
+
+            ConsoleColor ForegroundColor = ConsoleColor.DarkRed;
+            ConsoleColor BackgroundColor = ConsoleColor.Black;
+
+            try
+            {
+                themeColors = File.ReadAllLines(dataPath);
+                if (Enum.TryParse(themeColors[0], true, out ForegroundColor) &&         //make sure whats read in are valid color choices
+                    Enum.TryParse(themeColors[1], true, out BackgroundColor))
+                {
+                    fileIOStatusMessage = "Complete";
+                }
+                else
+                {
+                    fileIOStatusMessage = "Data file incorrectly formated.";
+                }
+            }
+            catch (DirectoryNotFoundException)
+            {
+                fileIOStatusMessage = "Unable to locate the folder for the data file.";
+            }
+            catch (Exception)
+            {
+                fileIOStatusMessage = "Unable to read data file.";
+            }
+
+            return (ForegroundColor, BackgroundColor);
+        }
+        #endregion
+
+        #region WRITE THEME DATA
+        private static string WriteThemeData(ConsoleColor ForegroundColor, ConsoleColor BackgroundColor)
+        {
+            string dataPath = @"Data/Theme.txt";
+            string fileIOStatusMessage = "";
+
+            try
+            {
+                File.WriteAllText(dataPath, ForegroundColor.ToString() + "\n");
+                File.AppendAllText(dataPath, BackgroundColor.ToString());
+            }
+            catch (DirectoryNotFoundException)
+            {
+                fileIOStatusMessage = "Unable to locate the folder for the data file.";
+            }
+            catch (Exception)
+            {
+                fileIOStatusMessage = "Unable to write to data files.";
+            }
+
+            return fileIOStatusMessage;
+        }
+        #endregion
+
+        ///*******************************************
+        ///*               USER LOGIN                *
+        ///*******************************************
+
+        #region LOGIN SCREEN
+        static void DisplayLoginRegister()
+        {
+            DisplayHeader("Login");
+
+            Console.WriteLine("\t\t Are you a registered user? [ yes | no ]");
+
+            if (Console.ReadLine().ToLower() == "yes")
+            {
+                DisplayLogin();
+            }
+            else
+            {
+                DisplayRegisterUser();
+                DisplayLogin();
+            }
+        }
+        #endregion
+
+        #region DISPLAY LOGIN
+        static void DisplayLogin()
+        {
+            string userName;
+            string password;
+            bool validLogin;
+
+            do
+            {
+                DisplayHeader("Login");
+
+                Console.WriteLine();
+                Console.Write("\t\t Enter your user name: ");
+                userName = Console.ReadLine();
+                Console.Write("\t\t Enter your password: ");
+                password = Console.ReadLine();
+
+                validLogin = IsValidLoginInfo(userName, password);
+
+                Console.WriteLine();
+                if (validLogin)
+                {
+                    Console.WriteLine("\t\t You are now logged in.");
+                }
+                else
+                {
+                    Console.WriteLine("\t\t It appears either the user name or password is incorrect");
+                    Console.WriteLine("\t\t Please try again.");
+                }
+
+                DisplayContinuePrompt();
+            } while (!validLogin);
+        }
+        #endregion
+
+        #region USER LOGIN VALID
+        static bool IsValidLoginInfo(string userName, string password)
+        {
+            List<(string userName, string password)> registeredUserLoginInfo = new List<(string userName, string password)>();
+            bool validUser = false;
+
+            registeredUserLoginInfo = ReadLoginInfoData();
+
+            foreach ((string userName, string password) userLoginInfo in registeredUserLoginInfo)                                      //loop through the list of registered user login tuples and check each one against the login info
+            {
+                if ((userLoginInfo.userName == userName) && (userLoginInfo.password == password))
+                {
+                    validUser = true;
+                    break;
+                }
+            }
+
+            return validUser;
+        }
+        #endregion
+
+        #region REGISTER SCREEN
+        static void DisplayRegisterUser()
+        {
+            string userName;
+            string password;
+
+            DisplayHeader("Register");
+
+            Console.WriteLine("\t\t Enter your username: ");
+            userName = Console.ReadLine();
+            Console.WriteLine("\t\t Enter your password: ");
+            password = Console.ReadLine();
+            WriteLoginInfoData(userName, password);
+
+            Console.WriteLine();
+            Console.WriteLine("\t\t You entered the following information and it has been saved.");
+            Console.WriteLine($"\t\t Username: {userName}");
+            Console.WriteLine($"\t\t Password: {password}");
+
+            DisplayContinuePrompt();
+        }
+        #endregion
+
+        #region READ LOGIN INFO
+        static List<(string userName, string password)> ReadLoginInfoData()                                       //basket for usernames and passwords. Get stored in ReadLoginInfoData()
+        {
+            string dataPath = @"Data/Logins.txt";
+            string[] loginInfoArray;
+            (string userName, string password) loginInfoTuple;
+
+            List<(string userName, string password)> registeredUserLoginInfo = new List<(string userName, string password)>();
+            loginInfoArray = File.ReadAllLines(dataPath);
+
+            foreach (string loginInfoText in loginInfoArray)                                                            //loop throug the array
+            {                                                                                                           //split the user name and password into a tuple    
+                loginInfoArray = loginInfoText.Split(',');                                                                                                           //add the tuple to the list
+
+                loginInfoTuple.userName = loginInfoArray[0];                                                                                                        // use the split method to separate the user name and pasword into an array    
+                loginInfoTuple.password = loginInfoArray[1];
+
+                registeredUserLoginInfo.Add(loginInfoTuple);
+
+            }
+            return registeredUserLoginInfo;
+        }
+        #endregion
+
+        #region WRITE LOGIN INFO TO DATA FILE
+        static void WriteLoginInfoData(string userName, string password)
+        {
+            string dataPath = @"Data/Logins.txt";
+            string loginInfoText;
+
+            loginInfoText = userName + "," + password + "\n";
+
+            File.AppendAllText(dataPath, loginInfoText);
+            Console.ReadLine();
+        }
+        #endregion
+
+        /// ******************************************
+        /// *                MAIN MENU               *                
+        /// ******************************************
+
+        #region DISPLAY EXIT
+        static void DisplayExit(Finch Jarvis)
+        {
+            DisplayHeader("Exit");
+
+            Console.WriteLine("\t\tExiting Program");
+            DisplayContinuePrompt();
+        }
+        #endregion
+
+        #region MAIN MENU SCREEN
+        static void DisplayMainMenuScreen()
+        {
+            Console.CursorVisible = true;
+
+            bool quitApplication = false;
+            string menuChoice;
+            bool valid = false;
+
+            Finch Jarvis = new Finch();
+
+            do
+            {
+
+                DisplayHeader("J.A.R.V.I.S.'S MAIN FRAME");
+
+                Console.WriteLine("\t\tj) Connect J.A.R.V.I.S.");
+                Console.WriteLine("\t\ta) Talent Show");
+                Console.WriteLine("\t\tr) Data Recorder");
+                Console.WriteLine("\t\tv) Alarm System");
+                Console.WriteLine("\t\ti) User Programming");
+                Console.WriteLine("\t\ts) Disconnect J.A.R.V.I.S");
+                Console.WriteLine("\t\t.) Exit");
+                Console.Write("\n\t\tWhat would you like to do? ");
+                menuChoice = Console.ReadLine().ToLower();
+
+                switch (menuChoice)
+                {
+                    case "j":
+                        DisplayConnectFinchRobot(Jarvis);
+                        break;
+
+                    case "a":
+                        TalentShowDisplayMenuScreen(Jarvis);
+                        break;
+
+                    case "r":
+                        DataRecorderDisplayMenuScreen(Jarvis);
+                        break;
+
+                    case "v":
+                        LightAlarmMenu(Jarvis);
+                        break;
+
+                    case "i":
+                        UserProgrammingDisplayMenuScreen(Jarvis);
+                        break;
+
+                    case "s":
+                        DisplayDisconnectFinchRobot(Jarvis);
+                        break;
+
+                    case ".":
+                        DisplayExit(Jarvis);
+                        quitApplication = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\t\tJ.A.R.V.I.S does not understand your strange human ways! ");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitApplication);
+
+        }
+        #endregion
+
+        /// ******************************************
+        /// *                TALENT SHOW             *                       
+        /// ******************************************
+
+        #region DANCING
+        static void TalentShowDisplayDance(Finch Jarvis)
+        {
+            DisplayHeader("A friend once told me to throw a little hot red in mix!");
+
+            Console.WriteLine("\n\tWorking on it, sir. This is a prototype.\n");
+            DisplayContinuePrompt();
+
+            Console.CursorVisible = false;
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(100, 100);
+            Jarvis.wait(3000);
+            Jarvis.setMotors(100, -100);
+            Jarvis.wait(3000);
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.setMotors(-100, 100);
+            Jarvis.wait(3000);
+            Jarvis.setMotors(-50, -50);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(50, 50);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.setMotors(-100, 100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(100, -100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.setMotors(-100, 100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(100, -100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.setMotors(-100, 100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(100, -100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.setMotors(-100, 100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(100, -100);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(50, 50);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.setMotors(-50, -50);
+            Jarvis.wait(1000);
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.setMotors(0, 0);
+            Jarvis.wait(1000);
+
+            Console.WriteLine("\n\tYes, that shall help you keep a low profile.\n");
+            DisplayMenuPrompt("Talent Show");
+
+        }
+        #endregion
+
+        #region MIXING IT UP
+        static void TalentShowDisplayMixingItUp(Finch Jarvis)
+        {
+            DisplayHeader("The House Party Protocol, sir?");
+
+            //Lights and Song
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(165);
+            Jarvis.wait(600);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(196);
+            Jarvis.wait(600);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(196);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(220);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(220);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(262);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(247);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(262);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(247);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(262);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(196);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(196);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(220);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(220);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+
+            //Lights, "song", and dancing (Can't really hear the song over the motor)
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(165);
+            Jarvis.setMotors(100, 100);
+            Jarvis.wait(600);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(196);
+            Jarvis.setMotors(-100, -100);
+            Jarvis.wait(600);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(196);
+            Jarvis.setMotors(-50, 50);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(220);
+            Jarvis.setMotors(50, -50);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(220);
+            Jarvis.setMotors(-50, 50);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(262);
+            Jarvis.setMotors(50, -50);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(247);
+            Jarvis.setMotors(50, 0);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(262);
+            Jarvis.setMotors(0, 50);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(247);
+            Jarvis.setMotors(10, 10);
+            Jarvis.wait(350);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(262);
+            Jarvis.setMotors(-10, -10);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(196);
+            Jarvis.setMotors(-100, 100);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(100, 0, 0);
+            Jarvis.noteOn(196);
+            Jarvis.setMotors(100, -100);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(220);
+            Jarvis.setMotors(50, 50);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Jarvis.setLED(218, 165, 32);
+            Jarvis.noteOn(220);
+            Jarvis.setMotors(0, 0);
+            Jarvis.wait(500);
+            Jarvis.noteOff();
+
+            Console.WriteLine("\n\tI don’t wanna see this on a Myspace page. Please, no gang signs. \n\tNo, throw it up; I’m kidding. Yeah, peace. I love peace. I’d be out of a job with peace.\n");
+            DisplayContinuePrompt();
+        }
+        #endregion
+
+        #region TALENT SHOW MENU SCREEN
+        static void TalentShowDisplayMenuScreen(Finch Jarvis)
+        {
+            Console.CursorVisible = true;
+
+            bool quitTalentShowMenu = false;
+            string menuChoice;
+
+            do
+            {
+                DisplayHeader("J.A.R.V.I.S. Abilities");
+
+                Console.WriteLine("\ti) Sound & Light Show");
+                Console.WriteLine("\tr) Dancing");
+                Console.WriteLine("\to) Ironette Audition");
+                Console.WriteLine("\tn) Return to Main Menu");
+                Console.Write("\n\t\tWhat would you like to see J.A.R.V.I.S. to do?");
+                Console.WriteLine("\n\t\tPlease enter the corresponding letter from the menu (keep in mind this module is under development):  ");
+                menuChoice = Console.ReadLine().ToLower();
+
+                switch (menuChoice)
+                {
+                    case "i":
+                        TalentShowDisplayLightAndSound(Jarvis);
+                        break;
+
+                    case "r":
+                        TalentShowDisplayDance(Jarvis);
+                        break;
+
+                    case "o":
+                        TalentShowDisplayMixingItUp(Jarvis);
+                        break;
+
+                    case "n":
+                        quitTalentShowMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPLEASE ENTER A LETTER FOR THE THE MENU CHOICE");
+                        break;
+                }
+
+            } while (!quitTalentShowMenu);
+        }
+        #endregion
+
+        #region LIGHT & SOUND
+        static void TalentShowDisplayLightAndSound(Finch Jarvis)
+        {
+            Console.CursorVisible = false;
+
+            DisplayHeader("Song and light show!");
+
+            Console.WriteLine("\tAvenger's Theme Song");
+            DisplayContinuePrompt();
+
+            for (int lightSoundLevel = 0; lightSoundLevel < 400; lightSoundLevel++)
+            {
+                Jarvis.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(600);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(600);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(146);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(13, 108, 172);
+                Jarvis.noteOn(155);
+                Jarvis.wait(100);
+                Jarvis.noteOff();
+                Jarvis.setLED(13, 108, 172);
+                Jarvis.noteOn(155);
+                Jarvis.wait(100);
+                Jarvis.noteOff();
+                Jarvis.setLED(13, 108, 172);
+                Jarvis.noteOn(155);
+                Jarvis.wait(600);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(13, 108, 172);
+                Jarvis.noteOn(155);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(13, 108, 172);
+                Jarvis.noteOn(155);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(600);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(230, 132, 49);
+                Jarvis.noteOn(174);
+                Jarvis.wait(150);
+                Jarvis.setLED(230, 132, 49);
+                Jarvis.noteOn(174);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(230, 132, 49);
+                Jarvis.noteOn(174);
+                Jarvis.wait(350);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(230, 132, 49);
+                Jarvis.noteOn(174);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(230, 132, 49);
+                Jarvis.noteOn(174);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(500);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(100, 0, 0);
+                Jarvis.noteOn(164);
+                Jarvis.wait(150);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(155);
+                Jarvis.wait(100);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(155);
+                Jarvis.wait(100);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(155);
+                Jarvis.wait(350);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(155);
+                Jarvis.wait(100);
+                Jarvis.noteOff();
+                Jarvis.setLED(131, 46, 118);
+                Jarvis.noteOn(155);
+                Jarvis.wait(100);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(23, 88, 32);
+                Jarvis.noteOn(123);
+                Jarvis.wait(800);
+                Jarvis.noteOff();
+
+                Jarvis.setLED(253, 242, 45);
+                Jarvis.noteOn(130);
+                Jarvis.wait(600);
+                Jarvis.noteOff();
+
+                break;
+            }
+
+            DisplayMenuPrompt("J.A.R.V.I.S.'s Abilities Menu");
+        }
+
+        #endregion
+
+        /// ******************************************
+        /// *               DATA RECORDER            *                *
+        /// ******************************************
+
+        #region DATA RECORDER MENU
+        static void DataRecorderDisplayMenuScreen(Finch Jarvis)
+        {
+            int numberOfDataPoints = 0;
+            double dataPointFrequency = 0;
+            double[] temperatures = null;
+
+            Console.CursorVisible = true;
+
+            bool quitMenu = false;
+            string menuChoice = null;
+            bool valid = false;
+
+            do
+            {
+                DisplayHeader("Data Recorder Menu");
+
+                Console.WriteLine("\t\ti Number of Data Points");
+                Console.WriteLine("\t\tr Frequency of Data Points");
+                Console.WriteLine("\t\to Get Data");
+                Console.WriteLine("\t\tn Show Data");
+                Console.WriteLine("\t\t* Get Light Data");
+                Console.WriteLine("\t\t. Return to Main Menu");
+                Console.Write("\n\t\tPlease enter the corresponding letter from the menu:  ");
+                menuChoice = Console.ReadLine().ToLower();                                                                 //Allows the user input to be stored in menuChoice variable and also converts user input to lower case      
+
+                if (string.Equals(menuChoice, "i") || string.Equals(menuChoice, "r") || string.Equals(menuChoice, "o") || string.Equals(menuChoice, "n") || string.Equals(menuChoice, "*") || string.Equals(menuChoice, "."))
+                {                                                                                                            //"if" user input (menuChoice) is equal to any of the options "i""o", etc. then the if condition is true
+                    valid = true;                                                                                           //Since "valid" is technically "false" when declared, we have to change it to true in the if statement so the option is recognized as true and not false
+                    Console.WriteLine($"\t\t{menuChoice} is valid.  You may proceed.");
+                    Console.WriteLine("\t\tPRESS ANY KEY TO CONTINUE");
                     Console.ReadKey();
-                    DataRecorderDisplayGetDataPointFrequency();
+                }
+                else                                                                                                       //Otherwise the statement is false, displaying that message and it will run through the while loop until user input is true
+                {
+                    Console.WriteLine($"{menuChoice} is invalid.  Try again.");
+                    Console.ReadKey();
+                }
+                //fail safe to ensure that after the user input has been recognized as true
+                //that you will exit out of the loop.
+                switch (menuChoice)
+                {
+                    case "i":
+                        numberOfDataPoints = DataRecorderDisplayGetNumberOfDataPoints();
+                        break;
+
+                    case "r":
+                        dataPointFrequency = DataRecorderDisplayGetDataPointFrequency();
+                        break;
+
+                    case "o":
+                        temperatures = DataRecorderDisplayGetData(numberOfDataPoints, dataPointFrequency, Jarvis);
+                        break;
+
+                    case "n":
+                        DataRecorderDisplayDataTable(temperatures);
+                        break;
+
+                    case "*":
+                        GetStoreLightValues(Jarvis);
+                        ReadLightValues();
+                        break;
+
+                    case ".":
+                        quitMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPLEASE ENTER A LETTER FOR THE THE MENU CHOICE");
+                        break;
                 }
 
-                return dataPointFrequency;
-            }
-            #endregion
+            } while (!quitMenu);
+        }
+        #endregion
 
-            #region NUMBER OF DATA POINTS
-            static int DataRecorderDisplayGetNumberOfDataPoints()
+        #region DATA TABLE
+        static void DataRecorderDisplayDataTable(double[] temperatures)
+        {
+            DisplayHeader("Show Data");
+
+            //
+            // display table headers
+            //
+
+            Console.WriteLine(
+                "Recording #".PadLeft(17) +
+                "Temp".PadLeft(12)
+                );
+
+            Console.WriteLine(
+              "\n__________".PadLeft(15) +
+           "__________".PadLeft(15)
+                );
+
+            //
+            // Display Table Data
+            //
+
+            for (int index = 0; index < temperatures.Length; index++)
             {
-                int numberOfDataPoints;
-                bool itsValid = false;
-
-                DisplayHeader("Number of Data Points");                                         // Pass String literal to the DisplayHeader method
-
-                do
-                {
-
-                    Console.Write("\t\tEnter the number of data points:  ");                        // Prompt user
-
-                    int.TryParse(Console.ReadLine(), out numberOfDataPoints);                       //  Collect their entry once per validation check
-
-                    // VALIDATION CHECK
-                    if (numberOfDataPoints >= 0 && numberOfDataPoints <= 9999999)
-                    {
-                        Console.WriteLine($"\t\t{numberOfDataPoints} has been accepted, please proceed!");
-                        itsValid = true;
-                    }
-
-                    else
-                    {
-                        Console.WriteLine("\t\tYour entry is invalid. Please try again.....");
-                    }
-
-                } while (!itsValid);
-
-                DisplayContinuePrompt();
-
-                return numberOfDataPoints;
+                Console.WriteLine(
+                    (index + 1).ToString().PadLeft(15) +
+                    temperatures[index].ToString("n2").PadLeft(15) + "°F"
+                    );
             }
-            #endregion
 
-            #region LIGHT DATA
-            static int[] GetLightData(Finch Jarvis)
+            DisplayContinuePrompt();
+        }
+        #endregion
+
+        #region MISC.
+        static void DataRecorderDisplayGetData(double[] temperatures)
+        {
+            DisplayHeader("Show Data");
+
+            DataRecorderDisplayTable(temperatures);
+
+            DisplayContinuePrompt();
+        }
+        #endregion
+
+        #region DISPLAY TABLE
+        static void DataRecorderDisplayTable(double[] temperatures)
+        {
+            //
+            // display table headers
+            //
+            Console.WriteLine(
+                "Recording #".PadLeft(17) +
+                "Temp".PadLeft(12)
+                );
+            Console.WriteLine(
+                "__________".PadLeft(15) +
+           "__________".PadLeft(15)
+                );
+
+
+            //
+            // Display Table Data
+            //
+
+            for (int index = 0; index < temperatures.Length; index++)
             {
-                DisplayHeader("Jarvis will see how much light is nearby!");
+                double fahrenheit = ConvertCelsiusToFahrenheit(temperatures[index]);            //find celcius data
+
+
+                Console.WriteLine(
+                    (index + 1).ToString().PadLeft(15) +
+                    temperatures[index].ToString("n2").PadLeft(15) + "°F"
+                    );
+            }
+            DisplayContinuePrompt();
+
+        }
+        #endregion
+
+        #region CONVERT CELSIUS TO FAHRENHEIT
+        /// <summary>
+        /// Converting Celsius to Fahrenheit
+        /// </summary>
+        /// <param name="celsius"></param>
+        /// <returns></returns>
+        static double ConvertCelsiusToFahrenheit(double celsius)
+        {
+            return celsius * 9 / 5 + 32;
+        }
+        #endregion
+
+        #region DISPLAY GET DATA
+        static double[] DataRecorderDisplayGetData(int numberOfDataPoints, double dataPointFrequency, Finch jarvis)
+        {
+            double[] temperatures = new double[numberOfDataPoints];
+
+            DisplayHeader("Get Data");
+
+            Console.WriteLine($"\t\tNumber of data points: {numberOfDataPoints}");
+            Console.WriteLine($"\t\tData point frequency: {dataPointFrequency}");
+            Console.WriteLine();
+
+            Console.WriteLine("\t\tJarvis is ready to begin recording the temperature data.");
+            Console.WriteLine("\t\tPress Any Key To Continue.");
+            DisplayContinuePrompt();
+
+            for (int index = 0; index < numberOfDataPoints; index++)
+            {
+                temperatures[index] = jarvis.getTemperature();
+                Console.WriteLine($"\t\tReading {index + 1}:{temperatures[index].ToString("n2")}");
+                int waitInSeconds = (int)(dataPointFrequency * 1000);
+                jarvis.wait(waitInSeconds);
+            }
+            Console.WriteLine("\t\tYour data recording has been completed.");
+            DisplayContinuePrompt();
+
+
+            DisplayHeader("Get Data");
+            Console.WriteLine();
+
+            Console.WriteLine("\t\tTable of Temperatures");
+            Console.WriteLine();
+
+            DataRecorderDisplayTable(temperatures);
+
+            DisplayContinuePrompt();
+
+            return temperatures;
+        }
+        #endregion
+
+        #region DATA POINT FREQUENCY
+        static double DataRecorderDisplayGetDataPointFrequency()
+        {
+            double dataPointFrequency;
+
+            DisplayHeader("Data Point Frequency");
+
+            Console.Write("\t\tEnter the frequency (in seconds) you would like to receive data points:  ");
+            double.TryParse(Console.ReadLine(), out dataPointFrequency);                                                                            //we have to convert the string to a double for the array
+                                                                                                                                                    //we have to convert the string to a double for the array
+                                                                                                                                                    //so even though its a number that is being typed in it thinks its a string
+                                                                                                                                                    //this way the user can enter decimal numbers as well
+
+            if (dataPointFrequency >= -0 && dataPointFrequency <= 9999999)
+            {
+                Console.WriteLine($"\t\t{dataPointFrequency} has been accepted, you may proceed!");
+                Console.ReadKey();
                 DisplayContinuePrompt();
+            }
+            else
+            {
+                Console.WriteLine("\t\tYour entry is invalid. Please press any key to try again....");
+                Console.ReadKey();
+                DataRecorderDisplayGetDataPointFrequency();
+            }
 
-                int[] lightSensor = Jarvis.getLightSensors();
-                Array.Sort(lightSensor);
+            return dataPointFrequency;
+        }
+        #endregion
 
-                for (int index = 0; index < lightSensor.Length; index++)
+        #region NUMBER OF DATA POINTS
+        static int DataRecorderDisplayGetNumberOfDataPoints()
+        {
+            int numberOfDataPoints;
+            bool itsValid = false;
+
+            DisplayHeader("Number of Data Points");                                         // Pass String literal to the DisplayHeader method
+
+            do
+            {
+
+                Console.Write("\t\tEnter the number of data points:  ");                        // Prompt user
+
+                int.TryParse(Console.ReadLine(), out numberOfDataPoints);                       //  Collect their entry once per validation check
+
+                // VALIDATION CHECK
+                if (numberOfDataPoints >= 0 && numberOfDataPoints <= 9999999)
                 {
-                    Console.WriteLine($"\t\t1, 2, 3 Go!  {lightSensor[index]}");
+                    Console.WriteLine($"\t\t{numberOfDataPoints} has been accepted, please proceed!");
+                    itsValid = true;
                 }
 
-                DisplayContinuePrompt();
+                else
+                {
+                    Console.WriteLine("\t\tYour entry is invalid. Please try again.....");
+                }
 
-                return lightSensor;
+            } while (!itsValid);
+
+            DisplayContinuePrompt();
+
+            return numberOfDataPoints;
+        }
+        #endregion
+
+       /* #region LIGHT DATA
+         static int[] GetLightData(Finch Jarvis)
+         {
+             DisplayHeader("Jarvis will see how much light is nearby!");
+             DisplayContinuePrompt();
+
+             int[] lightSensor = Jarvis.getLightSensors();
+             Array.Sort(lightSensor);
+
+             for (int index = 0; index < lightSensor.Length; index++)
+             {
+                 Console.WriteLine($"\t\t1, 2, 3 Go!  {lightSensor[index]}");
+             }
+
+             DisplayContinuePrompt();
+
+             return lightSensor;
+         }
+         #endregion*/
+
+
+        #region WRITE LIGHT VALUE
+        static void GetStoreLightValues(Finch Jarvis)
+        {
+            DisplayHeader("Jarvis will see how much light is nearby!");
+            DisplayContinuePrompt();
+
+            string dataPath = @"Data/DataRecorder.txt";
+            string lightData1;
+            string lightData2;
+            string allData;
+
+            for(int i = 0; i<=4; ++i)
+            {
+                int[] getData;
+                getData = Jarvis.getLightSensors();
+                lightData1 = Convert.ToString(getData[0]);
+                lightData2 = Convert.ToString(getData[1]);
+                allData = lightData1 + "," + lightData2 + "\n";
+                File.AppendAllText(dataPath, allData);
+                Console.WriteLine(allData + "\n");
+                lightData1 = null;
+                lightData2 = null;
+                allData = null;
+                Jarvis.wait(1000);
             }
-            #endregion
+            DisplayContinuePrompt();
+            return;
+        }
+        #endregion
 
-            /// ******************************************************************
-            /// *                    LIGHT ALARM MENU                            *
-            /// ******************************************************************
+        #region READ LIGHT VALUE
 
-            #region ALARM MENU SCREEN
-            static void LightAlarmMenu(Finch Jarvis)
+        static void ReadLightValues()
+            {
+                string dataPath = @"Data/DataRecorder.txt";
+                string[] lightData;
+
+                lightData = File.ReadAllLines(dataPath);
+
+            Console.WriteLine("\t\tYour Light Values are: \n");
+            Console.WriteLine("\n");
+
+            for(int i = 0; i<=4; ++i)
+            {
+                Console.WriteLine("\t\tData Point\t" + i + ": " + lightData [i] + "\n");
+            }
+            Console.WriteLine("\t\tData in the text file will be cleared once you continue.");
+            DisplayContinuePrompt();
+            File.WriteAllText(dataPath, String.Empty);                                             //Clears the data for the next use.     
+            return ;
+
+        }
+        #endregion
+
+
+
+    /// *****************************************
+    /// *             LIGHT ALARM MENU          *                         *
+    /// *****************************************
+
+        #region ALARM MENU SCREEN
+    static void LightAlarmMenu(Finch Jarvis)
             {
                 Console.CursorVisible = true;
 
@@ -998,7 +1334,7 @@ namespace Project_FinchControl
             }
             #endregion
 
-            #region ALARM SENSORS
+        #region ALARM SENSORS
             static string LightAlarmSensors()
             {
                 string sensorsToMonitor;
@@ -1029,7 +1365,7 @@ namespace Project_FinchControl
             }
             #endregion
 
-            #region ALARM RANGES
+        #region ALARM RANGES
             static string LightAlarmRanges()
             {
                 string rangeType = null;
@@ -1061,7 +1397,7 @@ namespace Project_FinchControl
             }
             #endregion
 
-            #region MIN MAX VALUES
+        #region MIN MAX VALUES
             static int LightAlarmMinMax(string rangeType, Finch jarvis)
             {
                 int minMaxValue;
@@ -1096,7 +1432,7 @@ namespace Project_FinchControl
             }
             #endregion
 
-            #region ALARM TIME
+        #region ALARM TIME
             static int LightAlarmTime()
             {
                 int timeToMonitor;
@@ -1127,7 +1463,7 @@ namespace Project_FinchControl
             }
             #endregion
 
-            #region SET ALARM
+        #region SET ALARM
             static void LightAlarmSet(
                 Finch jarvis,
                 string sensorsToMonitor,
@@ -1222,11 +1558,11 @@ namespace Project_FinchControl
 
             #endregion
 
-            ///******************************************************************
-            ///*                        USER PROGRAMMING                        *
-            ///******************************************************************
+        ///******************************************
+        ///*              USER PROGRAMMING          *              *
+        ///******************************************
 
-            #region USER PROGRAMMING MENU
+        #region USER PROGRAMMING MENU
         static void UserProgrammingDisplayMenuScreen(Finch Jarvis)
         {
             string menuChoice;
@@ -1285,11 +1621,8 @@ namespace Project_FinchControl
         }
         #endregion
 
-            #region GET COMMAND PARAMETERS FROM USER
-        /// ************************************************************
-        /// *           GET COMMAND PARAMETERS FROM USER               *
-        /// ************************************************************
-        /// <returns>Tuple of command parameters</returns>
+        #region GET COMMAND PARAMETERS FROM USER
+       
         static (int motorSpeed, int ledBrightness, double waitSeconds) UserProgrammingDisplayGetCommandParameters()
         {
             DisplayHeader("Command Parameters");
@@ -1316,7 +1649,7 @@ namespace Project_FinchControl
         }
         #endregion
 
-            #region CHECK USER INPUT VALIDATION
+        #region CHECK USER INPUT VALIDATION
 
         static void GetValidInteger(string userPrompt, int minSpeed, int maxSpeed, out int userResponse)         //this is similar to a parallel array. 
         {                                                                                                       //You are comparing these variables (in order) with the GetValidInteger prompt for user input.
@@ -1372,11 +1705,8 @@ namespace Project_FinchControl
 
         #endregion
 
-            #region GET FINCH COMMANDS 
-        /// *************************************************************
-        /// *               GET FINCH COMMANDS                          *
-        /// *************************************************************
-        /// <param name="commands"></param>
+        #region GET FINCH COMMANDS 
+      
         static void UserProgrammingDisplayGetFinchCommands(List<Command> commands)
         {
             Command command = Command.NONE;                                             //none = default (no value)
@@ -1436,10 +1766,8 @@ namespace Project_FinchControl
         }
             #endregion
 
-            #region DISPLAY FINCH COMMANDS
-            /// **********************************************
-            /// *           DISPLAY FINCH COMMANDS           *
-            /// **********************************************
+        #region DISPLAY FINCH COMMANDS
+     
             static void UserProgrammingDisplayFinchCommands(List<Command> commands)
             {
                 Command command = Command.NONE;                                             //none = default (no value)
@@ -1462,10 +1790,8 @@ namespace Project_FinchControl
 
             #endregion
 
-            #region EXECUTE COMMANDS
-            /// ************************************************
-            /// *           EXECUTE COMMANDS                   *
-            /// ************************************************
+        #region EXECUTE COMMANDS
+
             static void UserProgrammingDisplayExecuteFinchCommands(
                Finch Jarvis,                                                                                 //send the finch robot, because we are going to work with a finch robot       
                List<Command> commands,                                                                       //send all the commands
@@ -1691,11 +2017,11 @@ namespace Project_FinchControl
             }
             #endregion
 
-            ///******************************************************************
-            ///*                    FINCH ROBOT MANAGEMENT                      *
-            ///******************************************************************
+        ///*******************************************
+        ///*           FINCH ROBOT MANAGEMENT        *              *
+        ///*******************************************
 
-            #region DISCONNECT FINCH
+        #region DISCONNECT FINCH
             static void DisplayDisconnectFinchRobot(Finch Jarvis)
             {
                 Console.CursorVisible = false;
@@ -1732,7 +2058,7 @@ namespace Project_FinchControl
             }
             #endregion
 
-            #region CONNECT FINCH 
+        #region CONNECT FINCH 
             static bool DisplayConnectFinchRobot(Finch finchRobot)
             {
                 Console.CursorVisible = false;
@@ -1782,18 +2108,14 @@ namespace Project_FinchControl
                 return robotConnected;
             }
 
-            #endregion
+        #endregion
 
-            ///******************************************************************
-            ///*                          USER INTERFACE                        *
-            ///******************************************************************
-
-            #region USER INTERFACE
-
-            /// *****************************************************************
-            /// *                     Welcome Screen                            *
-            /// *****************************************************************
-            static void DisplayWelcomeScreen()
+        ///*******************************************
+        ///*               USER INTERFACE            *            *
+        ///*******************************************
+       
+        #region WELCOME SCREEN    
+        static void DisplayWelcomeScreen()
             {
                 Console.CursorVisible = false;
 
@@ -1815,11 +2137,10 @@ namespace Project_FinchControl
 
                 DisplayContinuePrompt();
             }
+        #endregion
 
-            /// *****************************************************************
-            /// *                     Closing Screen                            *
-            /// *****************************************************************
-            static void DisplayClosingScreen()
+        #region CLOSING SCREEN
+        static void DisplayClosingScreen()
             {
                 Console.CursorVisible = false;
 
@@ -1831,19 +2152,29 @@ namespace Project_FinchControl
                 DisplayContinuePrompt();
             }
 
-            static void DisplayContinuePrompt()
+        #endregion
+
+        #region DISPLAY CONTINUE PROMPT
+        static void DisplayContinuePrompt()
             {
                 Console.WriteLine();
                 Console.WriteLine("\t\tPRESS ANY KEY TO CONTINUE.");
                 Console.ReadKey();
             }
-            static void DisplayMenuPrompt(string menuName)
+
+        #endregion
+
+        #region DISPLAY MENU PROMPT
+        static void DisplayMenuPrompt(string menuName)
             {
                 Console.WriteLine();
                 Console.WriteLine($"\t\tPRESS ANY KEY TO RETURN TO {menuName} MENU.");
                 Console.ReadKey();
             }
-            static void DisplayHeader(string headerText)
+        #endregion
+
+        #region DISPLAY HEADER
+        static void DisplayHeader(string headerText)
             {
                 Console.Clear();
                 Console.WriteLine();
@@ -1852,6 +2183,7 @@ namespace Project_FinchControl
             }
 
             #endregion
+
         }
     }
 
