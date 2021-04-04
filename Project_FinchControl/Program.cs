@@ -1235,7 +1235,7 @@ namespace Project_FinchControl
             Console.WriteLine("\t\tYour Light Values are: \n");
             Console.WriteLine("\n");
 
-            for(int i = 0; i<=4; ++i)
+            for(int i = 0; i<=1; ++i)
             {
                 Console.WriteLine("\t\tData Point\t" + i + ": " + lightData [i] + "\n");
             }
